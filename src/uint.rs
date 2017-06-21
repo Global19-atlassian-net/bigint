@@ -35,6 +35,7 @@ use std::ops::{Shr, Shl, BitAnd, BitOr, BitXor, Not, Div, Rem, Mul, Add, Sub};
 use std::cmp::Ordering;
 use byteorder::{ByteOrder, BigEndian, LittleEndian};
 use rustc_serialize::hex::{ToHex, FromHex, FromHexError};
+use rand;
 
 /// Conversion from decimal string error
 #[derive(Debug, PartialEq)]
@@ -1089,6 +1090,12 @@ macro_rules! construct_uint {
 		impl From<&'static str> for $name {
 			fn from(s: &'static str) -> Self {
 				s.parse().unwrap()
+			}
+		}
+
+		impl rand::Rand for $name {
+			fn rand<R: rand::Rng>(rng: &mut R) -> Self {
+				$name(rng.gen())
 			}
 		}
 	);
