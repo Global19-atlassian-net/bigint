@@ -1404,6 +1404,32 @@ impl From<U256> for u32 {
 
 known_heap_size!(0, U128, U256);
 
+pub struct Range {
+	low: U256,
+	range: U256,
+	zone: U256,
+}
+
+impl Range {
+	// Copied from the implementation in rand
+	pub fn new(low: U256, high: U256) -> Range {
+		let range = high - low ;
+		let zone = U256::max_value() - U256::max_value() % range;
+
+		Range { low, range, zone }
+	}
+
+	// Copied from the implementation in rand
+	pub fn independent_sample<R: rand::Rng>(&self, mut rng: R) -> U256 {
+		loop {
+			let v = rng.gen::<U256>();
+			if v < self.zone {
+				return self.low + (v % self.range);
+			}
+		}
+	}
+}
+
 #[cfg(test)]
 mod tests {
 	use uint::{U128, U256, U512};
